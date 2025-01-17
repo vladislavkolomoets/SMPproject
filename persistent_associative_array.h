@@ -18,26 +18,26 @@ struct AA_node
 };
 
 template <typename KeyType, typename ValueType>
-class PersistentAssociativeArray 
+class PersistentAssociativeArray
 {
 private:
     std::vector<std::shared_ptr<AA_node<KeyType, ValueType>>> versions{};
 
     std::shared_ptr<AA_node<KeyType, ValueType>> insert(std::shared_ptr<AA_node<KeyType, ValueType>> root, KeyType key, ValueType value) {
-        if (!root) 
+        if (!root)
         {
             return std::make_shared<AA_node<KeyType, ValueType>>(key, value);
         }
 
-        if (key < root->key) 
+        if (key < root->key)
         {
             root->left = insert(root->left, key, value);
         }
-        else if (key > root->key) 
+        else if (key > root->key)
         {
             root->right = insert(root->right, key, value);
         }
-        else 
+        else
         {
             root->value = value; // Update value when the key matches
         }
@@ -46,7 +46,7 @@ private:
 
     // Recursive function to copy the tree
     std::shared_ptr<AA_node<KeyType, ValueType>> copyTree(std::shared_ptr<AA_node<KeyType, ValueType>> root) {
-        if (!root) 
+        if (!root)
         {
             return nullptr;
         }
@@ -99,10 +99,10 @@ public:
     }
 
     // Function to add a new version with a value change
-    void addVersion(int root_position, KeyType change_key, ValueType new_value) 
+    void addVersion(int root_position, KeyType change_key, ValueType new_value)
     {
         if (current_version < 0 || current_version >= versions.size() ||
-            root_position < 0 || root_position >= versions.size()) 
+            root_position < 0 || root_position >= versions.size())
         {
             throw std::out_of_range("Invalid root position");
         }
@@ -119,9 +119,9 @@ public:
     }
 
     // Test function for output
-    void print() 
+    void print()
     {
-        for (const auto& version : versions) 
+        for (const auto& version : versions)
         {
             // Print information for each node
             std::cout << "Version root key: " << version->key << ", value: " << version->value << std::endl;
@@ -144,7 +144,7 @@ public:
     // Method to make REDO action
     void redo()
     {
-        if (current_version >= versions.size() - 1) 
+        if (current_version >= versions.size() - 1)
         {
             std::cout << "No actions to redo!" << std::endl;
             return;
@@ -173,30 +173,30 @@ public:
         }
     }
 
-    ValueType findValueInNode(std::shared_ptr<AA_node<KeyType, ValueType>> root, const KeyType& key) 
+    ValueType findValueInNode(std::shared_ptr<AA_node<KeyType, ValueType>> root, const KeyType& key)
     {
-        if (!root) 
+        if (!root)
         {
             throw std::runtime_error("Key not found"); // or return a default value
         }
 
-        if (key < root->key) 
+        if (key < root->key)
         {
             return findValueInNode(root->left, key);
         }
-        else if (key > root->key) 
+        else if (key > root->key)
         {
             return findValueInNode(root->right, key);
         }
-        else 
+        else
         {
             return root->value; // Found the node with the corresponding key
         }
     }
 
-    std::vector<ValueType> getVersion(size_t idx) const 
+    std::vector<ValueType> getVersion(size_t idx) const
     {
-        if (idx < versions.size()) 
+        if (idx < versions.size())
         {
             std::vector<ValueType> result;
             collectValues(versions[idx], result);
@@ -206,9 +206,9 @@ public:
     }
 
     // Recursive function to collect values from the tree
-    void collectValues(std::shared_ptr<AA_node<KeyType, ValueType>> node, std::vector<ValueType>& result) const 
+    void collectValues(std::shared_ptr<AA_node<KeyType, ValueType>> node, std::vector<ValueType>& result) const
     {
-        if (!node) 
+        if (!node)
         {
             return;
         }
